@@ -25,49 +25,44 @@
 <div class="container">
   <h2>Shipping Materials Cost Calculator</h2>
   <div class="description">
-    For each material enter the <strong>total cost</strong> and <strong>total quantity</strong> you bought (from any mix of pack sizes),<br>
-    plus how many units you use per shipment. The calculator shows price-per-unit and your total supply cost.
+    Enter the <strong>total cost</strong> and <strong>total quantity</strong> you purchased for each material.  
+    The tool assumes every shipment uses <strong>one</strong> of each listed item and shows your per-unit and total supply cost.
   </div>
 
-  <!-- ── Preset items ───────────────────────────── -->
+  <!-- ── Preset materials ───────────────────────── -->
   <div id="presetWrapper">
     <div class="row" data-name="Toploader">
       <h4>Toploaders</h4>
-      <label>Total Cost of Toploaders Purchased ($): <input class="cost"   type="number" step="0.01" placeholder="e.g. 27.50" /></label>
-      <label>Total Units Purchased: <input              class="qty"    type="number" step="1"    placeholder="e.g. 50" /></label>
-      <label>Units Used per Shipment: <input            class="used"   type="number" step="1"    placeholder="e.g. 1" /></label>
+      <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 27.50" /></label>
+      <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="e.g. 50" /></label>
     </div>
 
     <div class="row" data-name="Penny Sleeve">
       <h4>Penny Sleeves</h4>
-      <label>Total Cost of Sleeves Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 7.00" /></label>
-      <label>Total Units Purchased: <input              class="qty"  type="number" step="1"    placeholder="e.g. 500" /></label>
-      <label>Units Used per Shipment: <input            class="used" type="number" step="1"    placeholder="e.g. 1" /></label>
+      <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 7.00" /></label>
+      <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="e.g. 500" /></label>
     </div>
 
     <div class="row" data-name="Team Bag">
       <h4>Team Bags</h4>
-      <label>Total Cost of Team Bags Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 5" /></label>
-      <label>Total Units Purchased: <input               class="qty"  type="number" step="1"    placeholder="e.g. 100" /></label>
-      <label>Units Used per Shipment: <input             class="used" type="number" step="1"    placeholder="e.g. 1" /></label>
+      <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 5" /></label>
+      <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="e.g. 100" /></label>
     </div>
 
     <div class="row" data-name="Bubble Mailer">
       <h4>Bubble Mailers</h4>
-      <label>Total Cost of Mailers Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 30" /></label>
-      <label>Total Units Purchased: <input              class="qty"  type="number" step="1"    placeholder="e.g. 100" /></label>
-      <label>Units Used per Shipment: <input            class="used" type="number" step="1"    placeholder="e.g. 1" /></label>
+      <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 30" /></label>
+      <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="e.g. 100" /></label>
     </div>
 
     <div class="row" data-name="Shipping Label">
       <h4>Shipping Labels</h4>
-      <label>Total Cost of Labels Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 5" /></label>
-      <label>Total Units Purchased: <input             class="qty"  type="number" step="1"    placeholder="e.g. 200" /></label>
-      <label>Units Used per Shipment: <input           class="used" type="number" step="1"    placeholder="e.g. 1" /></label>
+      <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="e.g. 5" /></label>
+      <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="e.g. 200" /></label>
     </div>
   </div>
 
-  <!-- ── Custom items ───────────────────────────── -->
+  <!-- ── Custom materials ───────────────────────── -->
   <div id="customWrapper"></div>
   <button id="addCustomBtn" class="btn-small" onclick="addCustom()">+ Add Extra Material</button>
 
@@ -83,7 +78,7 @@
 </div>
 
 <script>
-/* ---------- dynamic custom items ---------- */
+/* ---------- custom item logic ---------- */
 let customId = 0;
 const MAX_CUSTOM = 10;
 function addCustom(){
@@ -97,7 +92,6 @@ function addCustom(){
     <label>Name: <input class="name" type="text" placeholder="e.g. Cardboard" /></label>
     <label>Total Cost Purchased ($): <input class="cost" type="number" step="0.01" placeholder="0.00" /></label>
     <label>Total Units Purchased: <input class="qty" type="number" step="1" placeholder="0" /></label>
-    <label>Units Used per Shipment: <input class="used" type="number" step="1" placeholder="0" /></label>
     <button class="btn-small" onclick="removeCustom('${div.id}')">Remove</button>
   `;
   document.getElementById('customWrapper').appendChild(div);
@@ -110,29 +104,26 @@ function removeCustom(id){
 }
 
 /* ---------- calculation ---------- */
-function perUnit(cost, qty){ return (qty>0)? cost/qty : 0; }
+const perUnit = (cost, qty) => (qty>0 ? cost/qty : 0);
 
 function calculate(){
   const rows = document.querySelectorAll('.row');
   let totalPerShipment = 0;
-  let resultsHTML = '';
+  let html = '';
 
   rows.forEach(row=>{
     const name  = row.dataset.name || row.querySelector('.name').value || 'Custom';
     const cost  = parseFloat(row.querySelector('.cost').value) || 0;
     const qty   = parseFloat(row.querySelector('.qty').value)  || 0;
-    const used  = parseFloat(row.querySelector('.used').value) || 0;
 
-    const unitCost = perUnit(cost, qty);
-    const shipCost = unitCost * used;
-
-    if(unitCost>0 && used>0){
-      resultsHTML += `<p>${name} – Per Unit: $${unitCost.toFixed(4)} | Per Shipment: $${shipCost.toFixed(2)}</p>`;
+    const unit  = perUnit(cost, qty);   // one unit per shipment
+    if(unit>0){
+      totalPerShipment += unit;
+      html += `<p>${name} – Per Unit / Per Shipment: $${unit.toFixed(4)}</p>`;
     }
-    totalPerShipment += shipCost;
   });
 
-  document.getElementById('itemResults').innerHTML = resultsHTML || '<p>No valid inputs yet.</p>';
+  document.getElementById('itemResults').innerHTML = html || '<p>No valid inputs yet.</p>';
   document.getElementById('totalShip').textContent = totalPerShipment.toFixed(2);
   document.getElementById('total100').textContent  = (totalPerShipment*100).toFixed(2);
   resizeIframe();
@@ -140,8 +131,7 @@ function calculate(){
 
 /* ---------- Softr auto-resize ---------- */
 function resizeIframe(){
-  const h=document.body.scrollHeight;
-  window.parent.postMessage({iframeHeight:h},"*");
+  window.parent.postMessage({iframeHeight:document.body.scrollHeight},"*");
 }
 window.addEventListener('load',resizeIframe);
 window.addEventListener('resize',resizeIframe);
