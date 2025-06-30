@@ -6,138 +6,156 @@
   <title>Card Spotter – Shipping Supply Cost Calculator</title>
   <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet" />
   <style>
-    html, body{
-      margin:0;padding:0;box-sizing:border-box;
-      background:#FFFFFF;color:#000000;
-      font-family:'Inconsolata',monospace;
-    }
-    .container{max-width:500px;margin:0 auto;padding:20px;}
+    html,body{margin:0;padding:0;box-sizing:border-box;background:#FFFFFF;color:#000000;font-family:'Inconsolata',monospace;}
+    .container{max-width:520px;margin:0 auto;padding:20px;}
+    label{display:block;font-size:.95rem;margin-bottom:4px;}
     input{width:100%;padding:8px;margin-bottom:12px;font-size:1rem;border:1px solid #ccc;border-radius:4px;}
-    button{
-      background:#D1B355;color:#000000;border:none;
-      padding:10px;font-weight:bold;width:100%;margin-top:10px;cursor:pointer;
-    }
+    button{background:#D1B355;color:#000000;border:none;padding:10px;font-weight:bold;width:100%;cursor:pointer;}
     button:hover{opacity:.9;}
-    h2,h3{text-align:center}
+    h2,h3{text-align:center;margin:10px 0;}
     .description{text-align:center;font-size:.95rem;line-height:1.4;margin-bottom:20px;}
     .result p{font-weight:bold;margin:6px 0;}
     .extra-wrapper{margin-top:10px;border-top:1px solid #ccc;padding-top:10px;}
-    .extra-item{margin-bottom:8px;}
+    .extra-item{margin-bottom:10px;}
     .add-btn{margin-top:0;}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Shipping Materials Cost Calculator</h2>
-    <div class="description">
-      Estimate your true supply cost per card shipment by entering what you pay per pack and how many of each item you use in one order.  
-      Need something else? Add up to 10 extra materials below.
-    </div>
-
-    <!-- Core materials -->
-    <label>Toploader – Pack Cost ($ / 25): <input id="toploaderCost" type="number" step="0.01" placeholder="e.g. 10" /></label>
-    <label>Toploaders Used per Shipment: <input id="toploaderQty" type="number" step="1" placeholder="e.g. 1" /></label>
-
-    <label>Penny Sleeves – Pack Cost ($ / 100): <input id="sleeveCost" type="number" step="0.01" placeholder="e.g. 1" /></label>
-    <label>Sleeves Used per Shipment: <input id="sleeveQty" type="number" step="1" placeholder="e.g. 1" /></label>
-
-    <label>Team Bags – Pack Cost ($ / 100): <input id="teamBagCost" type="number" step="0.01" placeholder="e.g. 3" /></label>
-    <label>Team Bags Used per Shipment: <input id="teamBagQty" type="number" step="1" placeholder="e.g. 1" /></label>
-
-    <label>Bubble Mailer – Cost per Mailer: <input id="mailerCost" type="number" step="0.01" placeholder="e.g. 0.30" /></label>
-    <label>Label Paper / Sticker – Cost per Label: <input id="labelCost" type="number" step="0.01" placeholder="e.g. 0.05" /></label>
-
-    <!-- Extra materials -->
-    <div id="extraWrapper" class="extra-wrapper">
-      <button id="addExtraBtn" class="add-btn" onclick="addExtra()">+ Add Extra Material</button>
-    </div>
-
-    <button onclick="calculateCosts()">Calculate</button>
-
-    <div class="result">
-      <h3>Results</h3>
-      <p>Toploader Cost: $<span id="toploaderResult">--</span></p>
-      <p>Sleeve Cost: $<span id="sleeveResult">--</span></p>
-      <p>Team Bag Cost: $<span id="teamBagResult">--</span></p>
-      <p>Bubble Mailer Cost: $<span id="mailerResult">--</span></p>
-      <p>Label Cost: $<span id="labelResult">--</span></p>
-      <div id="extraResults"></div>
-      <p><strong>Total Supply Cost per Shipment: $<span id="totalCost">--</span></strong></p>
-      <p><strong>Total Supply Cost per 100 Shipments: $<span id="totalCost100">--</span></strong></p>
-    </div>
+<div class="container">
+  <h2>Shipping Materials Cost Calculator</h2>
+  <div class="description">
+    Enter the <strong>pack price</strong>, <strong>pack quantity</strong>, and how many units you use per shipment.<br>
+    The calculator outputs each item’s <strong>per-unit cost</strong> plus your total supply cost.
   </div>
 
+  <!-- ── Core materials ───────────────────────────── -->
+  <label>Toploader – Pack Price ($): <input id="toploaderPackPrice" type="number" step="0.01" placeholder="e.g. 10" /></label>
+  <label>Toploader – Pack Quantity (units): <input id="toploaderPackQty" type="number" step="1" placeholder="e.g. 25" /></label>
+  <label>Toploaders Used per Shipment: <input id="toploaderUsed" type="number" step="1" placeholder="e.g. 1" /></label>
+
+  <label>Penny Sleeves – Pack Price ($): <input id="sleevePackPrice" type="number" step="0.01" placeholder="e.g. 1" /></label>
+  <label>Penny Sleeves – Pack Quantity (units): <input id="sleevePackQty" type="number" step="1" placeholder="e.g. 100" /></label>
+  <label>Sleeves Used per Shipment: <input id="sleeveUsed" type="number" step="1" placeholder="e.g. 1" /></label>
+
+  <label>Team Bags – Pack Price ($): <input id="teamPackPrice" type="number" step="0.01" placeholder="e.g. 3" /></label>
+  <label>Team Bags – Pack Quantity (units): <input id="teamPackQty" type="number" step="1" placeholder="e.g. 100" /></label>
+  <label>Team Bags Used per Shipment: <input id="teamUsed" type="number" step="1" placeholder="e.g. 1" /></label>
+
+  <label>Bubble Mailers – Pack Price ($): <input id="mailerPackPrice" type="number" step="0.01" placeholder="e.g. 30" /></label>
+  <label>Bubble Mailers – Pack Quantity (units): <input id="mailerPackQty" type="number" step="1" placeholder="e.g. 100" /></label>
+  <label>Mailers Used per Shipment: <input id="mailerUsed" type="number" step="1" placeholder="e.g. 1" /></label>
+
+  <label>Shipping Labels – Pack Price ($): <input id="labelPackPrice" type="number" step="0.01" placeholder="e.g. 5" /></label>
+  <label>Shipping Labels – Pack Quantity (units): <input id="labelPackQty" type="number" step="1" placeholder="e.g. 100" /></label>
+  <label>Labels Used per Shipment: <input id="labelUsed" type="number" step="1" placeholder="e.g. 1" /></label>
+
+  <!-- ── Extra materials ──────────────────────────── -->
+  <div id="extraWrapper" class="extra-wrapper">
+    <button id="addExtraBtn" class="add-btn" onclick="addExtra()">+ Add Extra Material</button>
+  </div>
+
+  <button onclick="calculate()">Calculate</button>
+
+  <!-- ── Results ──────────────────────────────────── -->
+  <div class="result">
+    <h3>Results</h3>
+    <p>Toploader – Per Unit Cost: $<span id="toploaderUnit">--</span></p>
+    <p>Sleeve – Per Unit Cost: $<span id="sleeveUnit">--</span></p>
+    <p>Team Bag – Per Unit Cost: $<span id="teamUnit">--</span></p>
+    <p>Bubble Mailer – Per Unit Cost: $<span id="mailerUnit">--</span></p>
+    <p>Shipping Label – Per Unit Cost: $<span id="labelUnit">--</span></p>
+    <div id="extraResults"></div>
+    <p><strong>Total Supply Cost per Shipment: $<span id="totalPerShip">--</span></strong></p>
+    <p><strong>Total Supply Cost per 100 Shipments: $<span id="totalPer100">--</span></strong></p>
+  </div>
+</div>
+
 <script>
+  /* ---------- allow up to 10 extra materials ---------- */
   let extraCount = 0;
   const MAX_EXTRA = 10;
 
   function addExtra(){
-    if(extraCount>=MAX_EXTRA) return;
+    if(extraCount >= MAX_EXTRA) return;
     extraCount++;
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'extra-item';
-    wrapper.id = `extra${extraCount}`;
-
-    wrapper.innerHTML = `
-      <label>Extra ${extraCount} – Cost per Unit ($): 
-        <input type="number" step="0.01" class="extraCost" placeholder="0.00">
+    const wrap = document.createElement('div');
+    wrap.className = 'extra-item';
+    wrap.id = `extra${extraCount}`;
+    wrap.innerHTML = `
+      <label>Extra ${extraCount} – Pack Price ($): 
+        <input class="extraPackPrice" type="number" step="0.01" placeholder="0.00">
       </label>
-      <label>Units Used per Shipment: 
-        <input type="number" step="1" class="extraQty" placeholder="0">
+      <label>Extra ${extraCount} – Pack Qty (units): 
+        <input class="extraPackQty" type="number" step="1" placeholder="0">
+      </label>
+      <label>Extra ${extraCount} – Units Used per Shipment: 
+        <input class="extraUsed" type="number" step="1" placeholder="0">
       </label>
     `;
-    document.getElementById('extraWrapper').insertBefore(wrapper, document.getElementById('addExtraBtn'));
-    if(extraCount===MAX_EXTRA){
+    document.getElementById('extraWrapper')
+            .insertBefore(wrap, document.getElementById('addExtraBtn'));
+    if(extraCount === MAX_EXTRA){
       document.getElementById('addExtraBtn').disabled = true;
     }
   }
 
-  function calculateCosts(){
-    const get = id => parseFloat(document.getElementById(id).value) || 0;
+  function perUnit(packPrice, packQty){
+    return packQty > 0 ? packPrice / packQty : 0;
+  }
 
-    const toploaderCost = (get('toploaderCost')/25)*get('toploaderQty');
-    const sleeveCost    = (get('sleeveCost')/100)*get('sleeveQty');
-    const teamBagCost   = (get('teamBagCost')/100)*get('teamBagQty');
-    const mailerCost    = get('mailerCost');
-    const labelCost     = get('labelCost');
+  function calculate(){
+    // helper to grab numeric value
+    const v = id => parseFloat(document.getElementById(id).value) || 0;
 
-    // Extra materials
-    let extraTotal = 0;
+    // core items
+    const topUnit  = perUnit(v('toploaderPackPrice'), v('toploaderPackQty'));
+    const sleeveUnit = perUnit(v('sleevePackPrice'), v('sleevePackQty'));
+    const teamUnit = perUnit(v('teamPackPrice'), v('teamPackQty'));
+    const mailerUnit = perUnit(v('mailerPackPrice'), v('mailerPackQty'));
+    const labelUnit = perUnit(v('labelPackPrice'), v('labelPackQty'));
+
+    // total per shipment
+    let total = (
+      topUnit   * v('toploaderUsed') +
+      sleeveUnit* v('sleeveUsed') +
+      teamUnit  * v('teamUsed') +
+      mailerUnit* v('mailerUsed') +
+      labelUnit * v('labelUsed')
+    );
+
+    // extras
     const extraLines = [];
     document.querySelectorAll('.extra-item').forEach((div, idx)=>{
-      const cost  = parseFloat(div.querySelector('.extraCost').value)||0;
-      const qty   = parseFloat(div.querySelector('.extraQty').value)||0;
-      const subtotal = cost*qty;
-      if(subtotal>0){
-        extraTotal += subtotal;
-        extraLines.push(`Extra ${idx+1} Cost: $${subtotal.toFixed(2)}`);
+      const price = parseFloat(div.querySelector('.extraPackPrice').value) || 0;
+      const qty   = parseFloat(div.querySelector('.extraPackQty').value)   || 0;
+      const used  = parseFloat(div.querySelector('.extraUsed').value)      || 0;
+      const unit  = perUnit(price, qty);
+      if(unit > 0 && used > 0){
+        total += unit * used;
+        extraLines.push(`<p>Extra ${idx+1} – Per Unit Cost: $${unit.toFixed(2)}</p>`);
       }
     });
 
-    const total = toploaderCost + sleeveCost + teamBagCost + mailerCost + labelCost + extraTotal;
-    const total100 = total*100;
+    // outputs
+    const o = (id,val)=>document.getElementById(id).textContent = val.toFixed(2);
+    o('toploaderUnit', topUnit);
+    o('sleeveUnit', sleeveUnit);
+    o('teamUnit', teamUnit);
+    o('mailerUnit', mailerUnit);
+    o('labelUnit', labelUnit);
 
-    // Output
-    document.getElementById('toploaderResult').textContent = toploaderCost.toFixed(2);
-    document.getElementById('sleeveResult').textContent = sleeveCost.toFixed(2);
-    document.getElementById('teamBagResult').textContent = teamBagCost.toFixed(2);
-    document.getElementById('mailerResult').textContent = mailerCost.toFixed(2);
-    document.getElementById('labelResult').textContent = labelCost.toFixed(2);
-
-    const extraResultsDiv = document.getElementById('extraResults');
-    extraResultsDiv.innerHTML = extraLines.map(l=>`<p>${l}</p>`).join('');
-
-    document.getElementById('totalCost').textContent = total.toFixed(2);
-    document.getElementById('totalCost100').textContent = total100.toFixed(2);
+    document.getElementById('extraResults').innerHTML = extraLines.join('');
+    document.getElementById('totalPerShip').textContent = total.toFixed(2);
+    document.getElementById('totalPer100').textContent  = (total*100).toFixed(2);
 
     resizeIframe();
   }
 
-  /* -------- auto-resize for Softr -------- */
+  /* ---------- Softr auto-resize ---------- */
   function resizeIframe(){
-    const height = document.body.scrollHeight;
-    window.parent.postMessage({iframeHeight:height},"*");
+    const h = document.body.scrollHeight;
+    window.parent.postMessage({iframeHeight:h}, "*");
   }
   window.addEventListener('load',resizeIframe);
   window.addEventListener('resize',resizeIframe);
